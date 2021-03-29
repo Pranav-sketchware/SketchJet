@@ -11,7 +11,7 @@ client = commands.Bot(command_prefix = '.')
 @client.event
 async def on_ready():
   print('Bot Ready')
-  
+Token = os.getenv('TOKEN') 
 @client.command()
 async def hi(ctx):
   await ctx.send(f"hi")
@@ -59,4 +59,4 @@ with open('data.json') as f:
   
   
 
-client.run('ODA4NTg1NDQ5ODQ4NDM4ODE1.YCIr4g.0kfT_j8KbwkPNvnHxoqCjji-94Q')
+client.run(Token)
