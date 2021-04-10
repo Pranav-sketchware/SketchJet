@@ -52,7 +52,7 @@ async def ping(ctx):
 with open('data.json') as f:
   data = json.load(f)
   user = {
-    'id': '762635443664977930',  'wallet': '500',  'bank': '0'}
+    'id': 'Pranav#8949',  'wallet': '500',  'bank': '0'}
   json.dumps(user)
   print(user)
   print(f['wallet'])
