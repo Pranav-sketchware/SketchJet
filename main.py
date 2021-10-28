@@ -15,28 +15,14 @@ from discord.ext import commands
 from flask import Flask, render_template, redirect
 from discord.ext.commands import cooldown, BucketType, MissingPermissions
 
-
-
-
-
 client = commands.Bot(command_prefix='.')
-
-
-
-
 
 def updateWallet(var):
   with open('wallet.json', 'w') as f:
     json.dump(var, f)
 
 
-
-
-
-
 #making a web server
-
-
 
 app = Flask('')
 
@@ -54,27 +40,19 @@ def webserver():
 webserver()
 
 
-
-
-
-
 #get host name
 
 
 def get_Host_name_IP(): 
 
     try: 
-
-        host_name = socket.gethostname() 
-
+        host_name = socket.gethostname()
         host_ip = of
-        print("Hostname :  ",host_name) 
-
-        print("IP : ", host_ip) 
+        print("Hostname :  ",host_name)
+        print("IP : ", host_ip)
 
     except: 
-
-        print("Unable to get Hostname and IP") 
+        print("Unable to get Hostname and IP")
 
 #function end
 
@@ -85,19 +63,13 @@ async def on_ready():
 	get_Host_name_IP()
 
 
-  
-
-
-
-
-
 #restart
 
 
 def restart():
 	os.system('cls' if os.name == 'nt' else 'clear')
-	python = sys.executable
-	os.execl(python, python, *sys.argv)
+	executable = sys.executable
+	os.execl(executable, executable, *sys.argv)
 
 
 @client.command()
@@ -110,11 +82,9 @@ async def mute(ctx, member: discord.Member):
 
 #spam
 
-
 @client.command()
 async def stop(ctx):
 	restart()
-
 
 
 @client.command()
@@ -128,8 +98,6 @@ async def spam(ctx, msg, amt):
     await ctx.send(msg.replace('&', " "))
     if cnt == int(amt):
       tf = False
-
-
 
 @spam.error
 async def spam_error(ctx, error):
@@ -289,9 +257,6 @@ async def daily(ctx):
 	updateWallet(wallet)
 
 
-
-
-
 @client.command(aliases=[('wd')])
 async def withdraw(ctx, amt):
 	user = str(ctx.author)
@@ -308,13 +273,6 @@ async def withdraw(ctx, amt):
 		with open('bank.json', 'w') as jso:
 			json.dump(bank, jso)
 			await ctx.send('Withdrew {"{:,}".format(amt)}')
-
-
-
-
-
-
-
 
 
 @client.command()
@@ -347,11 +305,7 @@ async def bet(ctx, amt=''):
 
 
 
-
-############NEW##################
-
-
-
+############NEW##########
 
 
 @client.command(aliases=[('make')])
@@ -370,37 +324,6 @@ async def new(ctx):
 		with open('bank.json', 'w') as jso:
 			json.dump(bank, jso)
 		await ctx.send("Created your account")
-
-
-#DiscordXD
-@client.command()
-async def helpxd(ctx):
-	now = datetime.now()
-	current_time = now.strftime("%H:%M")
-	helpEmbed = discord.Embed(
-	    title="Help",
-	    description="Displays Information about SketchJet's commands.",
-	    color=0x03a9f4)
-	helpEmbed.add_field(
-	    name="General",
-	    value="`.help` `.invite` `.hello` `.bye`",
-	    inline=False)
-	helpEmbed.add_field(
-	    name="Fun",
-	    value=
-	    "`.die`",
-	    inline=False)
-	helpEmbed.add_field(
-	    name="Music",
-	    value=
-	    "`xd!connect` `xd!disconnect` `xd!play <url>` `xd!pause` `xd!seek` `xd!np`",
-	    inline=False)
-	helpEmbed.add_field(
-	    name="Tools",
-	    value="`xd!pfp <user>` `xd!userinfo <user>` `xd!botnick`",
-	    inline=False)
-	helpEmbed.set_footer(text=f"Command sent by {ctx.author} - {current_time}")
-	await ctx.send(embed=helpEmbed)
 
 Token = os.getenv('TOKEN')
 client.run(Token)
