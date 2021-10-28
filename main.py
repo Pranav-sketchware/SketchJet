@@ -206,5 +206,201 @@ async def ping(ctx):
 	await message.edit(embed=embed)
 
 
+#Economy
+
+
+@client.command(aliases=['bal'])
+async def balance(ctx, user=''):
+	with open('wallet.json') as f:
+		wallet = json.load(f)
+	with open('bank.json') as f:
+		bank = json.load(f)
+	user = str(ctx.author)
+	if user in wallet and user in bank:
+	  em = discord.Embed(title=str(ctx.author.name) + "'s balance")
+	  em.add_field(name='Wallet', value="{:,}".format(int(wallet[user])))
+	  em.add_field(name='Bank', value="{:,}".format(int(bank[user])))
+	  await ctx.send(embed=em)
+	else:
+		await ctx.send("Your balance is not stored. Start one by typing [.new]")
+
+
+@client.command()
+@commands.cooldown(1, 15, commands.BucketType.user)
+async def beg(ctx):
+
+	with open('wallet.json') as f:
+		wallet = json.load(f)
+	user = str(ctx.author)
+	begged = random.randrange(0, 900)
+	newbal = int(wallet[user]) + int(begged)
+	wallet[user] = newbal
+	msg = f"Someone gave you {'{:,}'.format(begged)} coins"
+	choice = str(msg)
+	if "I would pay my taxes rather than giving you anything." not in msg:
+	  updateWallet(wallet);
+	  em = discord.Embed(title=choice, description=f'Your new wallet balance is {newbal}')
+	  await ctx.send(embed=em)
+	else:
+		em = discord.Embed(title=choice, description='You got nothing')
+		await ctx.send(embed=em)
+
+
+@client.command(aliases=['dep'])
+async def deposit(ctx, amount):
+	with open("wallet.json") as f:
+		wallet = json.load(f)
+	with open("bank.json") as f:
+		bank = json.load(f)
+	user = str(ctx.author)
+	if amount == 'max' or 'all':
+		bank[user] = bank[user] + wallet[user]
+		with open('bank.json', 'w') as jso:
+			json.dump(bank, jso)
+		await ctx.send(f'Deposited {wallet[user]} to bank. \n Current bank balance is {bank[user]} coins')
+		wallet[user] = 0
+		updateWallet(wallet)
+	else:
+		if int(amount) > wallet[user]:
+			await ctx.send("Hey Idiot, you cannot deposit more than ∆" +
+			               f"{'{:,}'.format(wallet[user])} from your wallet")
+		else:
+			bank[user] = bank[user] + int(amount)
+			wallet[user] = wallet[user] - int(amount)
+			await ctx.send(f"Successfully deposited {'{:,}'.format(amount)} to bank")
+			with open('bank.json', 'w') as jso:
+				json.dump(bank, jso)
+			updateWallet(wallet)
+
+
+@client.command()
+@commands.cooldown(1, 86400, commands.BucketType.user)
+async def daily(ctx):
+	with open("wallet.json") as f:
+		wallet = json.load(f)
+	with open("bank.json") as f:
+		bank = json.load(f)
+	user = str(ctx.author)
+	daily = [5000, 7500, 10000, 12500]
+	choice = int(random.choice(daily))
+	wallet[user] = wallet[user] + choice
+	await ctx.send(f"You recieved {'{:,}'.format(choice)} from daily command")
+
+	updateWallet(wallet)
+
+
+
+
+
+@client.command(aliases=[('wd')])
+async def withdraw(ctx, amt):
+	user = str(ctx.author)
+	with open('wallet.json') as f:
+		wallet = json.load(f)
+	with open('bank.json') as f:
+		bank = json.load(f)
+	if int(amt) == None:
+		await ctx.send("You didn't provide the value to withdraw")
+	else:
+		wallet[user] = wallet[user] + int(amt)
+		bank[user] = bank[user] - int(amt)
+		updateWallet(wallet)
+		with open('bank.json', 'w') as jso:
+			json.dump(bank, jso)
+			await ctx.send('Withdrew {"{:,}".format(amt)}')
+
+
+
+
+
+
+
+
+
+@client.command()
+async def bet(ctx, amt=''):
+	user = str(ctx.author)
+	with open('wallet.json') as f:
+	  wallet = json.load(f)
+	  choice = random.choice(['yes', 'no'])
+	if amt == 'max' or amt == 'all':
+	    resultCoins = int(wallet[user])/2
+	    if choice == 'yes':
+	      wallet[user] = wallet[user] + resultCoins
+	      await ctx.send(f"You won {'{:,}'.format(int(resultCoins))} coins :seizure:")
+	    else:
+	      wallet[user] = int(wallet[user]) - int(resultCoins)
+	      await ctx.send(f"You lost {'{:,}'.format(int(resultCoins))} coins :pensive:")
+	else:
+	  resultCoins = int(amt)/2
+	  try:
+	    if float(amt).is_integer:
+	      if choice == 'yes':
+	        wallet[user] = int(wallet[user]) + int(resultCoins)
+	        await ctx.send(f"You won {'{:,}'.format(int(resultCoins))} coins :seizure:")
+	      else:
+	        wallet[user] = int((wallet[user]) - (resultCoins))
+	        await ctx.send(f"You lost {'{:,}'.format(int(resultCoins))} :pensive:")
+	  except:
+	      await ctx.send(f"{ctx.author} You have to give a valid amount of coins to bet")
+	updateWallet(wallet)
+
+
+
+
+############NEW##################
+
+
+
+
+
+@client.command(aliases=[('make')])
+async def new(ctx):
+	user = str(ctx.author)
+	with open('wallet.json') as f:
+		wallet = json.load(f)
+	with open('bank.json') as f:
+		bank = json.load(f)
+	if user in wallet and bank:
+		await ctx.send('You already have an account, stupid.')
+	else:
+		wallet[user] = 250
+		bank[user] = 500
+		updateWallet(wallet)
+		with open('bank.json', 'w') as jso:
+			json.dump(bank, jso)
+		await ctx.send("Created your account")
+
+
+#DiscordXD
+@client.command()
+async def helpxd(ctx):
+	now = datetime.now()
+	current_time = now.strftime("%H:%M")
+	helpEmbed = discord.Embed(
+	    title="Help",
+	    description="Displays Information about SketchJet's commands.",
+	    color=0x03a9f4)
+	helpEmbed.add_field(
+	    name="General",
+	    value="`.help` `.invite` `.hello` `.bye`",
+	    inline=False)
+	helpEmbed.add_field(
+	    name="Fun",
+	    value=
+	    "`.die`",
+	    inline=False)
+	helpEmbed.add_field(
+	    name="Music",
+	    value=
+	    "`xd!connect` `xd!disconnect` `xd!play <url>` `xd!pause` `xd!seek` `xd!np`",
+	    inline=False)
+	helpEmbed.add_field(
+	    name="Tools",
+	    value="`xd!pfp <user>` `xd!userinfo <user>` `xd!botnick`",
+	    inline=False)
+	helpEmbed.set_footer(text=f"Command sent by {ctx.author} - {current_time}")
+	await ctx.send(embed=helpEmbed)
+
 Token = os.getenv('TOKEN')
 client.run(Token)
